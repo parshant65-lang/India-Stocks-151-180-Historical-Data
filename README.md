@@ -1,3 +1,68 @@
 # India Public Equities (Constituents 151 to 180) - 1-Minute Historical Kline Archive
 
-Initializing cloud ingestion pipeline for constituents 151 to 180...
+An institutional-grade, open-source archive of cleaned, standardized, and validated **1-minute intraday historical candlestick data** for **India's Top Liquid Companies (Batch 151 to 180)** with daily automated cloud ingestion.
+
+---
+
+## 🏛️ Directory Architecture & Strict Date-Wise Hierarchy
+
+Every stock is strictly organized into daily CSVs partitioned by Year/Month/Date:
+
+```text
+India-Stocks-151-180-Historical-Data/
+├── MANKIND/
+│   └── 1m/
+│       ├── README.md
+│       └── 2026/
+│           └── 10/
+│               ├── MANKIND_1m_2026-10-01.csv
+│               ├── MANKIND_1m_2026-10-05.csv
+│               └── MANKIND_1m_2026-10-09.csv
+├── MARICO/
+│   └── 1m/...
+└── ... [All 30 Companies]
+```
+
+---
+
+## 📊 Dataset Overview
+- **Constituents:** 30 Benchmark Companies (Rank 151 to 180)
+- **Timeframe:** 1 Minute (`1m`)
+- **Total Archived Daily Files:** `210` sessions
+- **Total 1-Minute Candles:** `75,818` candles
+- **Last Ingested:** `2026-10-10 18:02:54 UTC`
+- **Trading Sessions:** Monday – Friday, 09:15 to 15:30 IST (03:45 to 10:00 UTC)
+
+---
+
+## 📑 Data Schema (Uniform Across All Files)
+
+| Column Name | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `timestamp` | `int64` | Candle open time in Unix milliseconds (UTC) | `1791517500000` |
+| `datetime_utc` | `string` | Standard ISO human-readable UTC timestamp | `2026-10-09 03:45:00` |
+| `open` | `float64` | Opening price in INR | `2450.00` |
+| `high` | `float64` | Highest price reached during the 1-minute window | `2455.50` |
+| `low` | `float64` | Lowest price reached during the 1-minute window | `2448.20` |
+| `close` | `float64` | Closing price of the 1-minute candle | `2452.10` |
+| `volume` | `float64` | Cumulative volume traded in the 1-minute candle | `1120` |
+
+---
+
+## ⚡ 1-Line Pandas Stream Loader (No Clone Required)
+
+Stream any stock's 1-minute data directly from GitHub's raw CDN into Pandas in 1 second:
+
+```python
+import pandas as pd
+
+# Load Mankind Pharma 1-minute data for October 09, 2026
+url = "https://raw.githubusercontent.com/parshant65-lang/India-Stocks-151-180-Historical-Data/main/MANKIND/1m/2026/10/MANKIND_1m_2026-10-09.csv"
+df = pd.read_csv(url)
+print(df.head())
+```
+
+---
+
+## 🔄 Daily Automated Cloud Ingestion
+A GitHub Actions workflow runs every weekday post-market (**Monday to Friday at 16:30 IST / 11:00 UTC**) to query Yahoo Finance, slice newly closed 1-minute sessions into daily CSVs, de-duplicate timestamps, and commit updates automatically.
